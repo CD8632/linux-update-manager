@@ -1,16 +1,19 @@
 #!/bin/bash
 
 LOG="$HOME/system-update.log"
-
-echo "==== Update started: $(date) ====" >> "$LOG"
+#First bash logging function
+log_message() {
+	echo "$1" | tee -a "$LOG"
+}
+log_message "==== Update started: $(date) ===="
 
 #Update Package lists
 if sudo apt-get update >> "$LOG" 2>&1
 then
-	echo "Package list update succesful." >> "$LOG"
+	log_message "Package list update successful."
 else
-	echo "ERROR: Package list update failed." >> "$LOG"
-	echo "==== Update failed $(date) ====" >> "$LOG"
+	log_message "ERROR: Package list update failed."
+	log_message "==== Update failed $(date) ===="
 	echo "" >> "$LOG"
 	exit 1
 fi
@@ -18,16 +21,16 @@ fi
 #Install available upgrades
 if sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y >> "$LOG" 2>&1
 then
-	echo "Package upgrade successful." >> "$LOG"
+	log_message "Package upgrade successful."
 else
-	echo "ERROR: Package upgrade failed." >> "$LOG"
-	echo "==== Update failed: $(date) ====" >> "$LOG"
+	log_message "ERROR: Package upgrade failed."
+	log_message "==== Update failed: $(date) ===="
 	echo "" >> "$LOG"
 	exit 1
 fi
 
-#Show succesful script
-echo "==== Update completed succesfully: $(date) ====" >> "$LOG"
+#Show successful script
+log_message "==== Update completed successfully: $(date) ===="
 echo "" >> "$LOG"
 
 exit 0
